@@ -18,6 +18,7 @@ class MovieModel(MovieBase):
         orm_mode = True
 
 # this is the original database schema
+# the Base which is being extended here helps this model to map to the database
 class MovieResponse(Base):
     __tablename__ = "movie_response"
 
