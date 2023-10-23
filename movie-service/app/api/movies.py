@@ -1,41 +1,22 @@
-from fastapi import Header, APIRouter, HTTPException
-from api.models import Movie
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from api.db import SessionLocal, engine, Base
+from api.models import MovieResponse, MovieModel, MovieBase, get_db
 
-fake_movie_db = [
-    {
-        'name': 'Star Wars: Episode IX - The Rise of Skywalker',
-        'plot': 'The surviving members of the resistance face the First Order once again.',
-        'genres': ['Action', 'Adventure', 'Fantasy'],
-        'casts': ['Daisy Ridley', 'Adam Driver']
-    }
-]
+router = APIRouter()
+
+Base.metadata.create_all(bind=engine)
+
+@router.get("/", response_model=list[MovieModel])
+def get_movies(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    movies = db.query(MovieResponse).offset(skip).limit(limit).all()
+    return movies
 
 
-movies = APIRouter()
-
-@movies.get('/', response_model=list[Movie])
-async def index():
-    return fake_movie_db
-
-@movies.post('/', status_code=201)
-async def add_movie(payload: Movie):
-    movie = payload.dict()
-    fake_movie_db.append(movie)
-    return {'id': len(fake_movie_db)-1}
-
-@movies.put('/{id}')
-async def update_movie(id: int, payload: Movie):
-    movie = payload.dict()
-    for i in fake_movie_db:
-        if i.id == id:
-            i = movie
-            return None
-    raise HTTPException(status_code=404, detail="Movie with given id not found")
-
-@movies.delete('/{id}')
-async def delete_movie(id: int):
-    for i in fake_movie_db:
-        if i.id == id:
-            del i
-            return None
-    raise HTTPException(status_code=404, detail="The movie with the given id not found")
+@router.post('/', response_model=MovieModel)
+def post_movie(movie: MovieBase, db: Session = Depends(get_db)):
+    new_movie = MovieResponse(**movie.model_dump())
+    db.add(new_movie)
+    db.commit()
+    db.refresh(new_movie)
+    return new_movie
