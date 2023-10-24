@@ -1,8 +1,25 @@
 from fastapi import FastAPI
 from api.movies import router as movie_router
 from api.db import SessionLocal
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+
+
+origins = [
+    "http://localhost:8001",
+]
+
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(movie_router)
 

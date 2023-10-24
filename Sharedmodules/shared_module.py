@@ -1,0 +1,1 @@
+from AuthenticationService.app.api.auth import get_current_user
