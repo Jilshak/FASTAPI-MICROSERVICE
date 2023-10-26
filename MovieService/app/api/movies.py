@@ -13,13 +13,13 @@ Base.metadata.create_all(bind=engine)
 
 
 @router.get("/", response_model=list[MovieModel])
-def get_movies(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+def get_movies(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     movies = db.query(MovieResponse).offset(skip).limit(limit).all()
     return movies
 
 
 @router.post('/', response_model=MovieModel)
-def post_movie(movie: MovieBase, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+def post_movie(movie: MovieBase, db: Session = Depends(get_db)):
     new_movie = MovieResponse(**movie.model_dump())
     db.add(new_movie)
     db.commit()

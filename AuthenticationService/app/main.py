@@ -13,16 +13,9 @@ app.include_router(auth.router)
 Base.metadata.create_all(bind=engine)
 
 
-
-origins = [
-    "http://localhost:8000",
-]
-
-
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -39,6 +32,8 @@ def get_db():
 
 user_dependency = Annotated[dict, Depends(get_current_user)]
 db_dependency = Annotated[Session, Depends(get_db)]
+
+
 
 
 @app.get('/', response_model=dict, status_code=status.HTTP_200_OK)
