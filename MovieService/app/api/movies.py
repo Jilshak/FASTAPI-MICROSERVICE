@@ -4,7 +4,6 @@ sys.path.append('C:\\Users\\Jilshak\\Desktop\\FASTAPI-MICROSERVICE')
 from sqlalchemy.orm import Session
 from api.db import SessionLocal, engine, Base
 from api.models import MovieResponse, MovieModel, MovieBase, get_db
-from AuthenticationService.app.api.auth import get_current_user
 
 
 router = APIRouter()

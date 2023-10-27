@@ -10,6 +10,7 @@ class MovieBase(BaseModel):
     genres: str
     casts: str
 
+
 # in this code i've added a the id to the movie_model 
 class MovieModel(MovieBase):
     id: int
